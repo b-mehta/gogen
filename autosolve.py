@@ -24,6 +24,7 @@ class SolveGogen(gogen.Gogen):
         # Predefine what the neighbourhood of each point is.
         self.neighbours = {(i, j): self._moore(i, j) for (i, j) in places}
 
+        # Set up board from already known information.
         for letter in gogen.alpha:
             place = self.fixed.get(letter)
             if place:
@@ -45,7 +46,7 @@ class SolveGogen(gogen.Gogen):
         return answer
 
     def spread_constraint_from_letter(self, letter):
-        if self.verbose:
+        if self.verbose >= 2:
             print('Propagating on', letter)
 
         allowed = self._group_neighbours(self.knowledge[letter])
@@ -55,7 +56,7 @@ class SolveGogen(gogen.Gogen):
         else:
             neighbours = self.c_store.get(letter)
 
-        if self.verbose:
+        if self.verbose >= 2:
             print('Neighbours', neighbours)
 
         for other in neighbours:
@@ -85,7 +86,7 @@ class SolveGogen(gogen.Gogen):
 
         if len(new) == 1:
             place = list(new)[0]
-            if self.verbose:
+            if self.verbose >= 2:
                 print('Bound {0} at {1}'.format(letter, place))
             self.fixed[letter] = {place}
             self.board[place[0]][place[1]] = letter
@@ -106,14 +107,14 @@ class SolveGogen(gogen.Gogen):
             if not self.c_store.get(current):
                 continue
 
-            if self.verbose:
+            if self.verbose >= 2:
                 print(self.c_store)
                 print(self.queue)
 
             self.spread_constraint_from_letter(current)
 
             while self.updated:
-                if self.verbose:
+                if self.verbose >= 2:
                     print(self.updated)
 
                 check = self.updated.copy()
@@ -123,7 +124,8 @@ class SolveGogen(gogen.Gogen):
 
             count += 1
 
-            print(count, board, sep='\n', end='\n\n')
+            if self.verbose >= 1:
+                print(count, board, sep='\n', end='\n\n')
 
         if not self.queue:
             print('queue empty')
@@ -141,7 +143,7 @@ if __name__ == '__main__':
                         default=['Puzzles/43.txt'],
                         help='a list of puzzles to solve')
     parser.add_argument('-v', '--verbose', help='increase output verbosity',
-                        action='store_true')
+                        action='count', default=0)
 
     args = parser.parse_args()
 
