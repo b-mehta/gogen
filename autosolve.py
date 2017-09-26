@@ -84,7 +84,11 @@ class SolveGogen(gogen.Gogen):
     def check_solved_letter(self, letter):
         new = self.knowledge[letter]
 
-        if len(new) == 1:
+        if len(new) <= 1:
+            if len(new) == 0:
+                print('unsolvable!')
+                return
+
             place = list(new)[0]
             if self.verbose >= 2:
                 print('Bound {0} at {1}'.format(letter, place))
