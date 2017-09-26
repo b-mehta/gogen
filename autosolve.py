@@ -122,6 +122,10 @@ class SolveGogen(gogen.Gogen):
                 for letter in check:
                     self.check_solved_letter(letter)
 
+            if self.verbose >= 3:
+                for i in gogen.alpha:
+                    print(i, self.knowledge[i])
+
             count += 1
 
             if self.verbose >= 1:
